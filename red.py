@@ -546,8 +546,8 @@ def get_answer():
 
 
 def load_cogs(bot):
-    defaults = ("alias", "audio", "customcom", "downloader", "economy",
-                "general", "image", "mod", "streams", "trivia")
+    defaults = ("alias", "customcom", "downloader", "economy",
+                "general", "mod")
 
     bot.load_extension('cogs.owner')
     owner_cog = bot.get_cog('Owner')

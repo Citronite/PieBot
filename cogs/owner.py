@@ -2,8 +2,8 @@ import discord
 from discord.ext import commands
 from cogs.utils import checks
 from cogs.utils.converters import GlobalUser
-from .utils.dataIO import dataIO
-from .utils.chat_formatting import pagify, box
+from cogs.utils.dataIO import dataIO
+from cogs.utils.chat_formatting import pagify, box
 
 import importlib
 import traceback
