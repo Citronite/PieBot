@@ -78,3 +78,6 @@ def escape(text, *, mass_mentions=False, formatting=False):
 
 def escape_mass_mentions(text):
     return escape(text, mass_mentions=True)
+
+def inline_list(list):
+    return ['`' + x + '`' for x in list]

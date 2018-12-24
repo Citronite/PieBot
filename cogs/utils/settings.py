@@ -204,13 +204,13 @@ class Settings:
     @property
     def default_admin(self):
         if "default" not in self.bot_settings:
-            self.update_old_settings()
+            self.update_old_settings_v1()
         return self.bot_settings["default"].get("ADMIN_ROLE", "")
 
     @default_admin.setter
     def default_admin(self, value):
         if "default" not in self.bot_settings:
-            self.update_old_settings()
+            self.update_old_settings_v1()
         self.bot_settings["default"]["ADMIN_ROLE"] = value
 
     @property
