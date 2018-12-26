@@ -15,8 +15,6 @@ class Settings:
         self.check_folders()
         self.default_settings = {
             "TOKEN": None,
-            "EMAIL": None,
-            "PASSWORD": None,
             "OWNER": None,
             "PREFIXES": [],
             "default": {"ADMIN_ROLE": "Transistor",

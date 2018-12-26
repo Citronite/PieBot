@@ -222,9 +222,7 @@ class Owner:
         result = str(result)
 
         if not ctx.message.channel.is_private:
-            censor = (self.bot.settings.email,
-                      self.bot.settings.password,
-                      self.bot.settings.token)
+            censor = (self.bot.settings.token)
             r = "[EXPUNGED]"
             for w in censor:
                 if w is None or w == "":
