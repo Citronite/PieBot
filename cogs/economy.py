@@ -270,13 +270,13 @@ class SetParser:
             elif self.sum > 0:
                 self.operation = "deposit"
             else:
-                raise
+                raise Exception
             self.sum = abs(self.sum)
         elif argument.isdigit():
             self.sum = int(argument)
             self.operation = "set"
         else:
-            raise
+            raise Exception
 
 
 class Economy:
@@ -581,7 +581,7 @@ class Economy:
             sign = "  "
             if i == 1:
                 sign = ">"
-            slot += "{}{} {} {}\n".format(sign, *[c.value for c in row])
+            slot += "{}{} {} {}\n".format(sign, *[c for c in row])
 
         payout = PAYOUTS.get(rows[1])
         if not payout:
