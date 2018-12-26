@@ -368,7 +368,7 @@ def run_red(autorestart):
         if not INTERACTIVE_MODE:
             exit(1)
 
-    cmd = (interpreter, "red.py")
+    cmd = (interpreter, "main.py")
 
     while True:
         try:
