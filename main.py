@@ -408,7 +408,7 @@ def interactive_setup(settings):
     first_run = settings.bot_settings == settings.default_settings
 
     if first_run:
-        print("Red - First run configuration\n")
+        print("First run configuration\n")
         print("If you haven't already, create a new account:\n"
               "https://twentysix26.github.io/Red-Docs/red_guide_bot_accounts/"
               "#creating-a-new-bot-account")
@@ -416,13 +416,10 @@ def interactive_setup(settings):
 
     if not settings.login_credentials:
         print("\nInsert your bot's token:")
-        while settings.token is None and settings.email is None:
+        while settings.token is None:
             choice = input("> ")
             if "@" not in choice and len(choice) >= 50:  # Assuming token
                 settings.token = choice
-            elif "@" in choice:
-                settings.email = choice
-                settings.password = input("\nPassword> ")
             else:
                 print("That doesn't look like a valid token.")
         settings.save_settings()

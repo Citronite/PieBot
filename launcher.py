@@ -153,7 +153,7 @@ def reset_bot(reqs=False, data=False, cogs=False, git_reset=False):
     if git_reset:
         code = subprocess.call(("git", "reset", "--hard"))
         if code == 0:
-            print("TCG Bot has been restored to the last local commit.")
+            print("Bot has been restored to the last local commit.")
         else:
             print("The repair has failed.")
 
