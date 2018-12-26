@@ -724,11 +724,8 @@ class Owner:
     @commands.command()
     @checks.is_owner()
     async def join(self):
-        """Shows Red's invite URL"""
-        if self.bot.user.bot:
-            await self.bot.whisper("Invite URL: " + self.bot.oauth_url)
-        else:
-            await self.bot.say("I'm not a bot account. I have no invite URL.")
+        """Shows bot's invite URL"""
+        await self.bot.whisper("Invite URL: " + self.bot.oauth_url)
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.is_owner()

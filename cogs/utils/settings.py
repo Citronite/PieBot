@@ -33,7 +33,7 @@ class Settings:
                     if key not in current.keys():
                         current[key] = self.default_settings[key]
                         print("Adding " + str(key) +
-                              " field to red settings.json")
+                              " field to settings.json")
                 dataIO.save_json(self.path, current)
             self.bot_settings = dataIO.load_json(self.path)
 
@@ -119,7 +119,7 @@ class Settings:
 
     @property
     def token(self):
-        return os.environ.get("RED_TOKEN", self.bot_settings["TOKEN"])
+        return os.environ.get("BOT_TOKEN", self.bot_settings["TOKEN"])
 
     @token.setter
     def token(self, value):

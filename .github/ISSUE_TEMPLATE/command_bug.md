@@ -1,6 +1,6 @@
 ---
 name: Bug reports for commands
-about: For bugs that involve commands found within Red
+about: For bugs that involve commands found within this bot
 
 ---
 
