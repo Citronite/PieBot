@@ -1,7 +1,7 @@
 from discord.ext import commands
-from .utils.chat_formatting import box
-from .utils.dataIO import dataIO
-from .utils import checks
+from cogs.utils.chat_formatting import box
+from cogs.utils.dataIO import dataIO
+from cogs.utils import checks
 from copy import copy
 import os
 import discord

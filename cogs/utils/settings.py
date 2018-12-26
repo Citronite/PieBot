@@ -5,7 +5,7 @@ import os
 import argparse
 
 
-default_path = "data/red/settings.json"
+default_path = "data/bot/settings.json"
 
 
 class Settings:
@@ -15,8 +15,6 @@ class Settings:
         self.check_folders()
         self.default_settings = {
             "TOKEN": None,
-            "EMAIL": None,
-            "PASSWORD": None,
             "OWNER": None,
             "PREFIXES": [],
             "default": {"ADMIN_ROLE": "Transistor",
@@ -35,26 +33,21 @@ class Settings:
                     if key not in current.keys():
                         current[key] = self.default_settings[key]
                         print("Adding " + str(key) +
-                              " field to red settings.json")
+                              " field to settings.json")
                 dataIO.save_json(self.path, current)
             self.bot_settings = dataIO.load_json(self.path)
 
-        if "default" not in self.bot_settings:
-            self.update_old_settings_v1()
-
-        if "LOGIN_TYPE" in self.bot_settings:
-            self.update_old_settings_v2()
         if parse_args:
             self.parse_cmd_arguments()
 
     def parse_cmd_arguments(self):
-        parser = argparse.ArgumentParser(description="Red - Discord Bot")
+        parser = argparse.ArgumentParser(description="TCG Bot")
         parser.add_argument("--owner", help="ID of the owner. Only who hosts "
-                                            "Red should be owner, this has "
+                                            "the bot should be owner, this has "
                                             "security implications")
         parser.add_argument("--co-owner", action="append", default=[],
                             help="ID of a co-owner. Only people who have "
-                                 "access to the system that is hosting Red "
+                                 "access to the system that is hosting the bot "
                                  "should be  co-owners, as this gives them "
                                  "complete access to the system's data. "
                                  "This has serious security implications if "
@@ -62,8 +55,8 @@ class Settings:
         parser.add_argument("--prefix", "-p", action="append",
                             help="Global prefix. Can be multiple")
         parser.add_argument("--admin-role", help="Role seen as admin role by "
-                                                 "Red")
-        parser.add_argument("--mod-role", help="Role seen as mod role by Red")
+                                                 "the bot")
+        parser.add_argument("--mod-role", help="Role seen as mod role by the bot")
         parser.add_argument("--no-prompt",
                             action="store_true",
                             help="Disables console inputs. Features requiring "
@@ -71,17 +64,14 @@ class Settings:
                                  "result")
         parser.add_argument("--no-cogs",
                             action="store_true",
-                            help="Starts Red with no cogs loaded, only core")
-        parser.add_argument("--self-bot",
-                            action='store_true',
-                            help="Specifies if Red should log in as selfbot")
+                            help="Starts the bot with no cogs loaded, only core")
         parser.add_argument("--memory-only",
                             action="store_true",
                             help="Arguments passed and future edits to the "
                                  "settings will not be saved to disk")
         parser.add_argument("--dry-run",
                             action="store_true",
-                            help="Makes Red quit with code 0 just before the "
+                            help="Makes the bot quit with code 0 just before the "
                                  "login. This is useful for testing the boot "
                                  "process.")
         parser.add_argument("--debug",
@@ -100,7 +90,6 @@ class Settings:
             self.default_mod = args.mod_role
 
         self.no_prompt = args.no_prompt
-        self.self_bot = args.self_bot
         self._memory_only = args.memory_only
         self._no_cogs = args.no_cogs
         self.debug = args.debug
@@ -120,34 +109,6 @@ class Settings:
         if not self._memory_only:
             dataIO.save_json(self.path, self.bot_settings)
 
-    def update_old_settings_v1(self):
-        # This converts the old settings format
-        mod = self.bot_settings["MOD_ROLE"]
-        admin = self.bot_settings["ADMIN_ROLE"]
-        del self.bot_settings["MOD_ROLE"]
-        del self.bot_settings["ADMIN_ROLE"]
-        self.bot_settings["default"] = {"MOD_ROLE": mod,
-                                        "ADMIN_ROLE": admin,
-                                        "PREFIXES": []
-                                        }
-        self.save_settings()
-
-    def update_old_settings_v2(self):
-        # The joys of backwards compatibility
-        settings = self.bot_settings
-        if settings["EMAIL"] == "EmailHere":
-            settings["EMAIL"] = None
-        if settings["PASSWORD"] == "":
-            settings["PASSWORD"] = None
-        if settings["LOGIN_TYPE"] == "token":
-            settings["TOKEN"] = settings["EMAIL"]
-            settings["EMAIL"] = None
-            settings["PASSWORD"] = None
-        else:
-            settings["TOKEN"] = None
-        del settings["LOGIN_TYPE"]
-        self.save_settings()
-
     @property
     def owner(self):
         return self.bot_settings["OWNER"]
@@ -158,37 +119,16 @@ class Settings:
 
     @property
     def token(self):
-        return os.environ.get("RED_TOKEN", self.bot_settings["TOKEN"])
+        return os.environ.get("BOT_TOKEN", self.bot_settings["TOKEN"])
 
     @token.setter
     def token(self, value):
         self.bot_settings["TOKEN"] = value
-        self.bot_settings["EMAIL"] = None
-        self.bot_settings["PASSWORD"] = None
-
-    @property
-    def email(self):
-        return os.environ.get("RED_EMAIL", self.bot_settings["EMAIL"])
-
-    @email.setter
-    def email(self, value):
-        self.bot_settings["EMAIL"] = value
-        self.bot_settings["TOKEN"] = None
-
-    @property
-    def password(self):
-        return os.environ.get("RED_PASSWORD", self.bot_settings["PASSWORD"])
-
-    @password.setter
-    def password(self, value):
-        self.bot_settings["PASSWORD"] = value
 
     @property
     def login_credentials(self):
         if self.token:
             return (self.token,)
-        elif self.email and self.password:
-            return (self.email, self.password)
         else:
             return tuple()
 
@@ -203,26 +143,18 @@ class Settings:
 
     @property
     def default_admin(self):
-        if "default" not in self.bot_settings:
-            self.update_old_settings_v1()
         return self.bot_settings["default"].get("ADMIN_ROLE", "")
 
     @default_admin.setter
     def default_admin(self, value):
-        if "default" not in self.bot_settings:
-            self.update_old_settings_v1()
         self.bot_settings["default"]["ADMIN_ROLE"] = value
 
     @property
     def default_mod(self):
-        if "default" not in self.bot_settings:
-            self.update_old_settings_v1()
         return self.bot_settings["default"].get("MOD_ROLE", "")
 
     @default_mod.setter
     def default_mod(self, value):
-        if "default" not in self.bot_settings:
-            self.update_old_settings_v1()
         self.bot_settings["default"]["MOD_ROLE"] = value
 
     @property

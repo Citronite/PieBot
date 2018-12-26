@@ -21,7 +21,7 @@ REPO_SAME = 0x4
 REPOS_LIST = "https://twentysix26.github.io/Red-Docs/red_cog_approved_repos/"
 WINDOWS_OS = os.name == 'nt'
 
-DISCLAIMER = ("You're about to add a 3rd party repository. The creator of Red"
+DISCLAIMER = ("You're about to add a 3rd party repository. The creators of this bot"
               " and its community have no responsibility for any potential "
               "damage that the content of 3rd party repositories might cause."
               "\nBy typing 'I agree' you declare to have read and understand "
@@ -327,7 +327,7 @@ class Downloader:
             await self.bot.say("Ok then, you can reload cogs with"
                                " `{}reload <cog_name>`".format(ctx.prefix))
         elif answer.content.lower().strip() == "yes":
-            registry = dataIO.load_json(os.path.join("data", "red", "cogs.json"))
+            registry = dataIO.load_json(os.path.join("data", "bot", "cogs.json"))
             update_list = []
             fail_list = []
             for repo, cog, _ in installed_updated_cogs:
@@ -597,7 +597,7 @@ class Downloader:
             if name not in self.repos:
                 raise UpdateError("Repo does not exist in data, wtf")
             folder = os.path.join(dd, name)
-            # Make sure we don't git reset the Red folder on accident
+            # Make sure we don't git reset the bot folder on accident
             if not os.path.exists(os.path.join(folder, '.git')):
                 #if os.path.exists(folder):
                     #shutil.rmtree(folder)

@@ -24,20 +24,19 @@ from cogs.utils.chat_formatting import inline
 from collections import Counter
 from io import TextIOWrapper
 
+# TCG Bot, a Discord Trading Card Game bot by PandaHappy and Pancake3,
+#                    built on Red and discord.py.
+#             https://github.com/Quantomistro3178/tcg-bot
 #
 # Red, a Discord bot by Twentysix, based on discord.py and its command
 #                             extension.
-#
 #                   https://github.com/Twentysix26/
-#
 #
 # red.py and cogs/utils/checks.py both contain some modified functions
 #                     originally made by Rapptz.
-#
 #                 https://github.com/Rapptz/RoboDanny/
-#
 
-description = "Red - A multifunction Discord bot by Twentysix"
+description = "TCG Bot - An entertainment bot by PandaHappy & Pancake3"
 
 
 class Bot(commands.Bot):
@@ -65,16 +64,10 @@ class Bot(commands.Bot):
         self.oauth_url = ""
 
         try:
-            self._cog_registry = dataIO.load_json("data/red/cogs.json")
+            self._cog_registry = dataIO.load_json("data/bot/cogs.json")
         except Exception:
             self._cog_registry = {}
 
-        if 'self_bot' in kwargs:
-            self.settings.self_bot = kwargs['self_bot']
-        else:
-            kwargs['self_bot'] = self.settings.self_bot
-            if self.settings.self_bot:
-                kwargs['pm_help'] = False
         super().__init__(*args, command_prefix=prefix_manager, **kwargs)
 
     async def send_message(self, *args, **kwargs):
@@ -152,9 +145,6 @@ class Bot(commands.Bot):
         if author.bot:
             return False
 
-        if author == self.user:
-            return self.settings.self_bot
-
         mod_cog = self.get_cog('Mod')
         global_ignores = self.get_cog('Owner').global_ignores
 
@@ -231,7 +221,7 @@ class Bot(commands.Bot):
             self.save_cogs()
 
     def save_cogs(self):
-        dataIO.save_json("data/red/cogs.json", self._cog_registry)
+        dataIO.save_json("data/bot/cogs.json", self._cog_registry)
 
     @property
     def first_run(self):
@@ -272,10 +262,6 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
         return discord.utils.oauth_url(data.id)
 
     async def set_bot_owner():
-        if bot.settings.self_bot:
-            bot.settings.owner = bot.user.id
-            return "[Selfbot mode]"
-
         if bot.settings.owner:
             owner = discord.utils.get(bot.get_all_members(),
                                       id=bot.settings.owner)
@@ -321,7 +307,7 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
         owner = await set_bot_owner()
 
         print("-----------------")
-        print("Red - Discord Bot")
+        print("     TCG Bot     ")
         print("-----------------")
         print(str(bot.user))
         print("\nConnected to:")
@@ -337,13 +323,11 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
             len(bot.cogs), total_cogs, len(bot.commands)))
         print("-----------------")
 
-        if bot.settings.token and not bot.settings.self_bot:
+        if bot.settings.token:
             print("\nUse this url to bring your bot to a server:")
             url = await get_oauth_url()
             bot.oauth_url = url
             print(url)
-
-        print("\nOfficial server: https://discord.gg/red")
 
         print("Make sure to keep your bot updated. Select the 'Update' "
               "option from the launcher.")
@@ -413,7 +397,7 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
 
 
 def check_folders():
-    folders = ("data", "data/red", "cogs", "cogs/utils")
+    folders = ("data", "data/bot", "cogs", "cogs/utils")
     for folder in folders:
         if not os.path.exists(folder):
             print("Creating " + folder + " folder...")
@@ -424,7 +408,7 @@ def interactive_setup(settings):
     first_run = settings.bot_settings == settings.default_settings
 
     if first_run:
-        print("Red - First run configuration\n")
+        print("First run configuration\n")
         print("If you haven't already, create a new account:\n"
               "https://twentysix26.github.io/Red-Docs/red_guide_bot_accounts/"
               "#creating-a-new-bot-account")
@@ -432,13 +416,10 @@ def interactive_setup(settings):
 
     if not settings.login_credentials:
         print("\nInsert your bot's token:")
-        while settings.token is None and settings.email is None:
+        while settings.token is None:
             choice = input("> ")
             if "@" not in choice and len(choice) >= 50:  # Assuming token
                 settings.token = choice
-            elif "@" in choice:
-                settings.email = choice
-                settings.password = input("\nPassword> ")
             else:
                 print("That doesn't look like a valid token.")
         settings.save_settings()
@@ -486,7 +467,7 @@ def interactive_setup(settings):
 
 
 def set_logger(bot):
-    logger = logging.getLogger("red")
+    logger = logging.getLogger("bot")
     logger.setLevel(logging.INFO)
 
     red_format = logging.Formatter(
@@ -504,7 +485,7 @@ def set_logger(bot):
         logger.setLevel(logging.INFO)
 
     fhandler = logging.handlers.RotatingFileHandler(
-        filename='data/red/red.log', encoding='utf-8', mode='a',
+        filename='data/bot/bot.log', encoding='utf-8', mode='a',
         maxBytes=10**7, backupCount=5)
     fhandler.setFormatter(red_format)
 
@@ -517,7 +498,7 @@ def set_logger(bot):
     else:
         dpy_logger.setLevel(logging.WARNING)
     handler = logging.FileHandler(
-        filename='data/red/discord.log', encoding='utf-8', mode='a')
+        filename='data/bot/discord.log', encoding='utf-8', mode='a')
     handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: '
         '%(message)s',
@@ -546,8 +527,7 @@ def get_answer():
 
 
 def load_cogs(bot):
-    defaults = ("alias", "customcom", "downloader", "economy",
-                "general", "mod")
+    defaults = ("alias", "customcom", "economy")
 
     bot.load_extension('cogs.owner')
     owner_cog = bot.get_cog('Owner')
@@ -603,8 +583,7 @@ def main(bot):
     bot.uptime = datetime.datetime.utcnow()
 
     if bot.settings.login_credentials:
-        yield from bot.login(*bot.settings.login_credentials,
-                             bot=not bot.settings.self_bot)
+        yield from bot.login(*bot.settings.login_credentials)
     else:
         print("No credentials available to login.")
         raise RuntimeError()
@@ -631,8 +610,6 @@ if __name__ == '__main__':
                            "next start.\n> ")
             if choice.lower().strip() == "reset":
                 bot.settings.token = None
-                bot.settings.email = None
-                bot.settings.password = None
                 bot.settings.save_settings()
                 print("Login credentials have been reset.")
     except KeyboardInterrupt:
