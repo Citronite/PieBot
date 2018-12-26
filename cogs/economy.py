@@ -4,7 +4,7 @@ from cogs.utils.dataIO import dataIO
 from collections import namedtuple, defaultdict, deque
 from datetime import datetime
 from copy import deepcopy
-from .utils import checks
+from cogs.utils import checks
 from cogs.utils.chat_formatting import pagify, box
 from enum import Enum
 import os
@@ -319,7 +319,7 @@ class Economy:
             await self.bot.say("{} You already have an account at the"
                                " Twentysix bank.".format(author.mention))
 
-    @_bank.command(pass_context=True)
+    @_bank.command(pass_context=True, no_pm=True)
     async def balance(self, ctx, user: discord.Member=None):
         """Shows balance of user.
 
@@ -341,7 +341,7 @@ class Economy:
             except NoAccount:
                 await self.bot.say("That user has no bank account.")
 
-    @_bank.command(pass_context=True)
+    @_bank.command(pass_context=True, no_pm=True)
     async def transfer(self, ctx, user: discord.Member, sum: int):
         """Transfer credits to other users"""
         author = ctx.message.author
@@ -360,7 +360,7 @@ class Economy:
         except NoAccount:
             await self.bot.say("That user has no bank account.")
 
-    @_bank.command(name="set", pass_context=True)
+    @_bank.command(name="set", pass_context=True, no_pm=True)
     @checks.admin_or_permissions(manage_server=True)
     async def _set(self, ctx, user: discord.Member, credits: SetParser):
         """Sets credits of user's bank account. See help for more operations
