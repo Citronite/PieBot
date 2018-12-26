@@ -36,7 +36,7 @@ from io import TextIOWrapper
 #                     originally made by Rapptz.
 #                 https://github.com/Rapptz/RoboDanny/
 
-description = "TCG Bot - By PandaHappy and Pancake3, forked from Red by Twentysix."
+description = "TCG Bot - An entertainment bot by PandaHappy & Pancake3"
 
 
 class Bot(commands.Bot):
