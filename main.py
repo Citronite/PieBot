@@ -527,45 +527,27 @@ def get_answer():
 
 
 def load_cogs(bot):
-    defaults = ("alias", "customcom", "economy")
 
+    bot.load_extension('cogs.tcg')
     bot.load_extension('cogs.owner')
     owner_cog = bot.get_cog('Owner')
+    tcg_cog = bot.get_cog('tcg')
     if owner_cog is None:
         print("The owner cog is missing. It contains core functions without "
               "which Red cannot function. Reinstall.")
         exit(1)
-
-    if bot.settings._no_cogs:
-        bot.logger.debug("Skipping initial cogs loading (--no-cogs)")
-        bot._cog_registry.clear()
-        bot.save_cogs()
-        return
-
-    failed = []
-    extensions = owner_cog._list_cogs()
-
-    if not bot._cog_registry:  # All default cogs enabled by default
-        for ext in defaults:
-            bot._cog_registry["cogs." + ext] = True
-
-    for extension in extensions:
-        if extension.lower() == "cogs.owner":
-            continue
-        to_load = bot._cog_registry.get(extension, False)
-        if to_load:
-            try:
-                owner_cog._load_cog(extension)
-            except Exception as e:
-                print("{}: {}".format(e.__class__.__name__, str(e)))
-                bot.logger.exception(e)
-                failed.append(extension)
-                bot._cog_registry[extension] = False
+    elif tcg_cog is None:
+        print("The TCG cog is missing. It contains core functionality for "
+              "this bot. Are you sure you wish to continue?")
+        ans = get_answer()
+        if not ans:
+            print("Starting bot without the TCG cog. . .")
+        else:
+            print("Please follow the instructions carefully and reinstall the bot again.")
+            exit(1)
 
     bot.save_cogs()
 
-    if failed:
-        print("\nFailed to load: {}\n".format(" ".join(failed)))
 
 
 def main(bot):

@@ -62,9 +62,6 @@ class Settings:
                             help="Disables console inputs. Features requiring "
                                  "console interaction could be disabled as a "
                                  "result")
-        parser.add_argument("--no-cogs",
-                            action="store_true",
-                            help="Starts the bot with no cogs loaded, only core")
         parser.add_argument("--memory-only",
                             action="store_true",
                             help="Arguments passed and future edits to the "
@@ -91,7 +88,6 @@ class Settings:
 
         self.no_prompt = args.no_prompt
         self._memory_only = args.memory_only
-        self._no_cogs = args.no_cogs
         self.debug = args.debug
         self._dry_run = args.dry_run
         self.co_owners = args.co_owner
