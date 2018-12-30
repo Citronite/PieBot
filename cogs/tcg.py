@@ -57,15 +57,16 @@ class TCG:
 
         
 def check_folders():
-    if not os.path.exists(os.path.join("data", "tcg")):
-        print('Making dir: data/tcg...')
-        os.mkdir(os.path.join("data", "tcg"))
+    f = os.path.join("data", "tcg")
+    if not os.path.exists(f):
+        print('Making dir: {}'.format(f))
+        os.mkdir(f)
 
 
 def check_files():
     f = os.path.join("data", "tcg", "images.json")
     if not dataIO.is_valid_json(f):
-        print("Creating default data/tcg/images.json")
+        print("Creating default {}".format(f))
         dataIO.save_json(f, {})
 
 
