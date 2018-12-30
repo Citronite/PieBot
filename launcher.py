@@ -288,7 +288,7 @@ def run_bot(autorestart):
         if not INTERACTIVE_MODE:
             exit(1)
 
-    cmd = (interpreter, "main.py")
+    cmd = (interpreter, "bot.py")
 
     while True:
         try:
