@@ -3,15 +3,15 @@ import re
 from discord.ext import commands
 from cogs.utils.dataIO import dataIO
 
-class Main:
-    """Main TCG Module!"""
+class TCG:
+    """TCG Module!"""
     def __init__(self, bot):
         self.bot = bot
 
 
     @commands.command(no_pms=True)
     async def hello(self):
-        await self.bot.say('Hello! <a:ZoomZoom:525301223910277132> <a:ZoomZoom:525301223910277132> <a:ZoomZoom:525301223910277132>')
+        await self.bot.say('Hello!')
 
 
     @commands.command(pass_context=True)
@@ -72,4 +72,4 @@ def check_files():
 def setup(bot):
     check_folders()
     check_files()
-    bot.add_cog(Main(bot))
+    bot.add_cog(TCG(bot))

@@ -540,7 +540,7 @@ def load_cogs(bot):
         print("The TCG cog is missing. It contains core functionality for "
               "this bot. Are you sure you wish to continue?")
         ans = get_answer()
-        if not ans:
+        if ans:
             print("Starting bot without the TCG cog. . .")
         else:
             print("Please follow the instructions carefully and reinstall the bot again.")
