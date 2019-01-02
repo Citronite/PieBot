@@ -7,6 +7,7 @@ import logging.handlers
 import traceback
 import datetime
 import subprocess
+import re
 
 try:
     from discord.ext import commands
@@ -18,6 +19,7 @@ except ImportError:
           "https://twentysix26.github.io/Red-Docs/\n")
     sys.exit(1)
 
+from cogs.utils import embeds
 from cogs.utils.settings import Settings
 from cogs.utils.dataIO import dataIO
 from cogs.utils.chat_formatting import inline
@@ -69,6 +71,8 @@ class Bot(commands.Bot):
             self._cog_registry = {}
 
         super().__init__(*args, command_prefix=prefix_manager, **kwargs)
+        self.remove_command('help')
+        self.command(**self.help_attrs)(_help_command)
 
     async def send_message(self, *args, **kwargs):
         if self._message_modifiers:
@@ -394,6 +398,67 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
             bot.logger.exception(type(error).__name__, exc_info=error)
 
     return bot
+
+
+_mentions_transforms = {
+    '@everyone': '@\u200beveryone',
+    '@here': '@\u200bhere'
+}
+
+_mention_pattern = re.compile('|'.join(_mentions_transforms.keys()))
+
+def _help_command(ctx, *commands : str):
+    """Shows this message."""
+    bot = ctx.bot
+    destination = ctx.message.author if bot.pm_help else ctx.message.channel
+
+    def repl(obj):
+        return _mentions_transforms.get(obj.group(0), '')
+
+    # help by itself just lists our own commands.
+    if len(commands) == 0:
+        embed = embeds.HelpEmbed(ctx)
+            
+    elif len(commands) == 1:
+        # try to see if it is a cog name
+        name = _mention_pattern.sub(repl, commands[0])
+        command = None
+        if name in bot.cogs:
+            command = bot.cogs[name]
+            embed = embeds.CogHelpEmbed(ctx, command)
+        else:
+            command = bot.commands.get(name)
+            if command is None:
+                yield from bot.send_message(destination, bot.command_not_found.format(name))
+                return
+            embed = embeds.CommandHelpEmbed(ctx, command)
+
+    else:
+        name = _mention_pattern.sub(repl, commands[0])
+        command = bot.commands.get(name)
+        if command is None:
+            yield from bot.send_message(destination, bot.command_not_found.format(name))
+            return
+
+        for key in commands[1:]:
+            try:
+                key = _mention_pattern.sub(repl, key)
+                command = command.commands.get(key)
+                if command is None:
+                    yield from bot.send_message(destination, bot.command_not_found.format(key))
+                    return
+            except AttributeError:
+                yield from bot.send_message(destination, bot.command_has_no_subcommands.format(command, key))
+                return
+
+        embed = embeds.CommandHelpEmbed(ctx, command)
+
+    if bot.pm_help is None:
+        if len(embed) > 1000:
+            destination = ctx.message.author
+
+    yield from bot.send_message(destination, embed)
+
 
 
 def check_folders():
