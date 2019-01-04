@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-from .utils.dataIO import dataIO
-from .utils import checks
+from cogs.utils.dataIO import dataIO
+from cogs.utils import checks
 from datetime import datetime
 from collections import deque, defaultdict, OrderedDict
 from cogs.utils.chat_formatting import escape_mass_mentions, box, pagify
@@ -746,7 +746,7 @@ class Mod:
 
         Examples:
         cleanup user @\u200bTwentysix 2
-        cleanup user Red 6"""
+        cleanup user PieBot 6"""
 
         channel = ctx.message.channel
         author = ctx.message.author

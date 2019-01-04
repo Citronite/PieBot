@@ -7,6 +7,7 @@ import logging.handlers
 import traceback
 import datetime
 import subprocess
+import re
 
 try:
     from discord.ext import commands
@@ -18,13 +19,14 @@ except ImportError:
           "https://twentysix26.github.io/Red-Docs/\n")
     sys.exit(1)
 
+from cogs.utils import embeds
 from cogs.utils.settings import Settings
 from cogs.utils.dataIO import dataIO
 from cogs.utils.chat_formatting import inline
 from collections import Counter
 from io import TextIOWrapper
 
-# TCG Bot, a Discord Trading Card Game bot by PandaHappy and Pancake3,
+# PieBot, a Discord Trading Card Game bot by PandaHappy and Pancake3,
 #                    built on Red and discord.py.
 #             https://github.com/Quantomistro3178/tcg-bot
 #
@@ -36,7 +38,7 @@ from io import TextIOWrapper
 #                     originally made by Rapptz.
 #                 https://github.com/Rapptz/RoboDanny/
 
-description = "TCG Bot - An entertainment bot by PandaHappy & Pancake3"
+description = "PieBot - An entertainment bot by PandaHappy & Pancake3"
 
 
 class Bot(commands.Bot):
@@ -69,6 +71,11 @@ class Bot(commands.Bot):
             self._cog_registry = {}
 
         super().__init__(*args, command_prefix=prefix_manager, **kwargs)
+        
+        # Unable to find a better way to fully override
+        # the default help cmd, so had to do this instead. :C
+        self.remove_command('help')
+        self.command(**self.help_attrs)(_help_command)
 
     async def send_message(self, *args, **kwargs):
         if self._message_modifiers:
@@ -131,13 +138,11 @@ class Bot(commands.Bot):
 
     async def send_cmd_help(self, ctx):
         if ctx.invoked_subcommand:
-            pages = self.formatter.format_help_for(ctx, ctx.invoked_subcommand)
-            for page in pages:
-                await self.send_message(ctx.message.channel, page)
-        else:
-            pages = self.formatter.format_help_for(ctx, ctx.command)
-            for page in pages:
-                await self.send_message(ctx.message.channel, page)
+            embed = embeds.CmdUsageEmbed(ctx, ctx.invoked_subcommand)
+            await self.send_message(ctx.message.channel, embed=embed)
+        elif ctx.command:
+            embed = embeds.CmdUsageEmbed(ctx, ctx.command)
+            await self.send_message(ctx.message.channel, embed=embed)
 
     def user_allowed(self, message):
         author = message.author
@@ -307,7 +312,7 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
         owner = await set_bot_owner()
 
         print("-----------------")
-        print("     TCG Bot     ")
+        print("     PieBot     ")
         print("-----------------")
         print(str(bot.user))
         print("\nConnected to:")
@@ -394,6 +399,72 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
             bot.logger.exception(type(error).__name__, exc_info=error)
 
     return bot
+
+
+_mentions_transforms = {
+    '@everyone': '@\u200beveryone',
+    '@here': '@\u200bhere'
+}
+
+_mention_pattern = re.compile('|'.join(_mentions_transforms.keys()))
+
+@asyncio.coroutine
+def _help_command(ctx, *commands : str):
+    """Shows this message."""
+    bot = ctx.bot
+    destination = ctx.message.author if bot.pm_help else ctx.message.channel
+
+    def repl(obj):
+        return _mentions_transforms.get(obj.group(0), '')
+
+    # help by itself just lists our own commands.
+    if len(commands) == 0:
+        embed = embeds.HelpEmbed(ctx)
+            
+    elif len(commands) == 1:
+        # try to see if it is a cog name
+        name = _mention_pattern.sub(repl, commands[0])
+        command = None
+        if name in bot.cogs:
+            command = bot.cogs[name]
+            embed = embeds.CogHelpEmbed(ctx, command)
+        elif commands[0] == 'bot':
+            embed = embeds.BotHelpEmbed(ctx)
+            yield from bot.send_message(destination, embed=embed)
+            return
+        else:
+            command = bot.commands.get(name)
+            if command is None:
+                yield from bot.send_message(destination, bot.command_not_found.format(name))
+                return
+            embed = embeds.CmdHelpEmbed(ctx, command)
+
+    else:
+        name = _mention_pattern.sub(repl, commands[0])
+        command = bot.commands.get(name)
+        if command is None:
+            yield from bot.send_message(destination, bot.command_not_found.format(name))
+            return
+
+        for key in commands[1:]:
+            try:
+                key = _mention_pattern.sub(repl, key)
+                command = command.commands.get(key)
+                if command is None:
+                    yield from bot.send_message(destination, bot.command_not_found.format(key))
+                    return
+            except AttributeError:
+                yield from bot.send_message(destination, bot.command_has_no_subcommands.format(command, key))
+                return
+
+        embed = embeds.CmdHelpEmbed(ctx, command)
+
+    if bot.pm_help is None:
+        if len(embed) > 1000:
+            destination = ctx.message.author
+
+    yield from bot.send_message(destination, embed=embed)
+
 
 
 def check_folders():
@@ -527,45 +598,27 @@ def get_answer():
 
 
 def load_cogs(bot):
-    defaults = ("alias", "customcom", "economy")
 
+    bot.load_extension('cogs.tcg')
     bot.load_extension('cogs.owner')
     owner_cog = bot.get_cog('Owner')
+    tcg_cog = bot.get_cog('TCG')
     if owner_cog is None:
         print("The owner cog is missing. It contains core functions without "
-              "which Red cannot function. Reinstall.")
+              "which PieBot cannot function. Reinstall.")
         exit(1)
-
-    if bot.settings._no_cogs:
-        bot.logger.debug("Skipping initial cogs loading (--no-cogs)")
-        bot._cog_registry.clear()
-        bot.save_cogs()
-        return
-
-    failed = []
-    extensions = owner_cog._list_cogs()
-
-    if not bot._cog_registry:  # All default cogs enabled by default
-        for ext in defaults:
-            bot._cog_registry["cogs." + ext] = True
-
-    for extension in extensions:
-        if extension.lower() == "cogs.owner":
-            continue
-        to_load = bot._cog_registry.get(extension, False)
-        if to_load:
-            try:
-                owner_cog._load_cog(extension)
-            except Exception as e:
-                print("{}: {}".format(e.__class__.__name__, str(e)))
-                bot.logger.exception(e)
-                failed.append(extension)
-                bot._cog_registry[extension] = False
+    elif tcg_cog is None:
+        print("The TCG cog is missing. It contains core functionality for "
+              "this bot. Are you sure you wish to continue?")
+        ans = get_answer()
+        if ans:
+            print("Starting PieBot without the TCG cog. . .")
+        else:
+            print("Please follow the instructions carefully and reinstall the bot again.")
+            exit(1)
 
     bot.save_cogs()
 
-    if failed:
-        print("\nFailed to load: {}\n".format(" ".join(failed)))
 
 
 def main(bot):
