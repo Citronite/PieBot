@@ -1,4 +1,4 @@
-# TCG Bot
+# PieBot
 
 A Trading Card Game bot for Discord.
 
