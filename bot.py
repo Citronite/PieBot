@@ -137,8 +137,12 @@ class Bot(commands.Bot):
         self._message_modifiers.clear()
 
     async def send_cmd_help(self, ctx):
-        embed = embeds.CmdHelpEmbed(ctx, ctx.invoked_subcommand)
-        await self.send_message(ctx.message.channel, embed=embed)
+        if ctx.invoked_subcommand:
+            embed = embeds.CmdUsageEmbed(ctx, ctx.invoked_subcommand)
+            await self.send_message(ctx.message.channel, embed=embed)
+        elif ctx.command:
+            embed = embeds.CmdUsageEmbed(ctx, ctx.command)
+            await self.send_message(ctx.message.channel, embed=embed)
 
     def user_allowed(self, message):
         author = message.author
@@ -424,6 +428,10 @@ def _help_command(ctx, *commands : str):
         if name in bot.cogs:
             command = bot.cogs[name]
             embed = embeds.CogHelpEmbed(ctx, command)
+        elif commands[0] == 'bot':
+            embed = embeds.BotHelpEmbed(ctx)
+            yield from bot.send_message(destination, embed=embed)
+            return
         else:
             command = bot.commands.get(name)
             if command is None:
