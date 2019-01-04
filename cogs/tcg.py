@@ -19,7 +19,7 @@ class TCG:
         path = "data/tcg/images.json"
         images = dataIO.load_json(path)
 
-        await self.bot.say('Please send an image or a link to an img.')
+        await self.bot.say('Please upload an image or send a link.')
         img_msg = await self.bot.wait_for_message(timeout=30, author=ctx.message.author)
         
         if not img_msg:
@@ -28,6 +28,8 @@ class TCG:
             url = img_msg.attachments[0].get('url')
         elif img_msg.content:
             url = img_msg.content
+        else:
+            self.bot.say("Invalid input.")
         
         await self.bot.say('Please enter a name for this file.')
         name_msg = await self.bot.wait_for_message(timeout=15, author=ctx.message.author)
