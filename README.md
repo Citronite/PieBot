@@ -1,6 +1,6 @@
 # PieBot
 
-A Trading Card Game bot for Discord.
+An in-development rpg/tcg bot for Discord.
 
 ### Developers: 
 
