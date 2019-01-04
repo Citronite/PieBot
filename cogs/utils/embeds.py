@@ -166,7 +166,7 @@ class BotHelpEmbed(RichEmbed):
                                           """.format(panda=panda, pancu=pancu, chillbar=chillbar, discordpy=discordpy, red=red),
                               color='bot')
         
-        self.add_field(name="Changelog", 
+        self.add_field(name="Changelog for this version", 
                        value="""```diff\n{}\n```""".format(CHANGELOG),
                        inline=False)
 
