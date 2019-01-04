@@ -20,4 +20,4 @@ PINK = 0xce01ff
 TURQUOISE = 0x1fffef
 CREAM = 0xfffbd8
 
-BOT = CREAM
+BOT = BLUE
