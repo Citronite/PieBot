@@ -27,5 +27,5 @@ class Sqlite_client(sqlite3.Connection):
         else:
             return self.cursor.fetchmany(size)
 
-
+    # TODO: Add a few more handy functions for CRUD + Select queries
 
