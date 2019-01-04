@@ -24,7 +24,7 @@ sys.path.insert(0, REQS_DIR)
 REQS_TXT = "requirements.txt"
 
 INTRO = ("==========================\n"
-         "    TCG Bot - Launcher    \n"
+         "    PieBot - Launcher    \n"
          "==========================\n")
 
 IS_WINDOWS = os.name == "nt"
@@ -34,7 +34,7 @@ INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
 PYTHON_OK = sys.version_info >= (3, 5)
 
 def parse_cli_arguments():
-    parser = argparse.ArgumentParser(description="TCG Bot's launcher")
+    parser = argparse.ArgumentParser(description="PieBot's launcher")
     parser.add_argument("--start", "-s",
                         help="Starts the bot",
                         action="store_true")
@@ -113,7 +113,7 @@ def update_bot():
               "the PATH environment variable like requested in the guide.")
         return
     if code == 0:
-        print("\nTCG Bot has been updated")
+        print("\nPieBot has been updated")
     else:
         print("\nThe bot was unable to update properly. If this is caused by edits "
               "you have made to the code you can try the repair option from "
@@ -415,7 +415,7 @@ def main():
     has_git = is_git_installed()
     is_git_installation = os.path.isdir(".git")
     if IS_WINDOWS:
-        os.system("TITLE TCG Bot - Launcher")
+        os.system("TITLE PieBot - Launcher")
     clear_screen()
 
     try:
@@ -486,5 +486,5 @@ if __name__ == '__main__':
     if INTERACTIVE_MODE:
         main()
     elif args.start:
-        print("Starting TCG Bot...")
+        print("Starting PieBot...")
         run_bot(autorestart=args.auto_restart)

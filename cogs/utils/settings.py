@@ -41,7 +41,7 @@ class Settings:
             self.parse_cmd_arguments()
 
     def parse_cmd_arguments(self):
-        parser = argparse.ArgumentParser(description="TCG Bot")
+        parser = argparse.ArgumentParser(description="PieBot")
         parser.add_argument("--owner", help="ID of the owner. Only who hosts "
                                             "the bot should be owner, this has "
                                             "security implications")

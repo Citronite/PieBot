@@ -26,7 +26,7 @@ from cogs.utils.chat_formatting import inline
 from collections import Counter
 from io import TextIOWrapper
 
-# TCG Bot, a Discord Trading Card Game bot by PandaHappy and Pancake3,
+# PieBot, a Discord Trading Card Game bot by PandaHappy and Pancake3,
 #                    built on Red and discord.py.
 #             https://github.com/Quantomistro3178/tcg-bot
 #
@@ -38,7 +38,7 @@ from io import TextIOWrapper
 #                     originally made by Rapptz.
 #                 https://github.com/Rapptz/RoboDanny/
 
-description = "TCG Bot - An entertainment bot by PandaHappy & Pancake3"
+description = "PieBot - An entertainment bot by PandaHappy & Pancake3"
 
 
 class Bot(commands.Bot):
@@ -71,6 +71,9 @@ class Bot(commands.Bot):
             self._cog_registry = {}
 
         super().__init__(*args, command_prefix=prefix_manager, **kwargs)
+        
+        # Unable to find a better way to fully override
+        # the default help cmd, so had to do this instead. :C
         self.remove_command('help')
         self.command(**self.help_attrs)(_help_command)
 
@@ -134,14 +137,8 @@ class Bot(commands.Bot):
         self._message_modifiers.clear()
 
     async def send_cmd_help(self, ctx):
-        if ctx.invoked_subcommand:
-            pages = self.formatter.format_help_for(ctx, ctx.invoked_subcommand)
-            for page in pages:
-                await self.send_message(ctx.message.channel, page)
-        else:
-            pages = self.formatter.format_help_for(ctx, ctx.command)
-            for page in pages:
-                await self.send_message(ctx.message.channel, page)
+        embed = embeds.CmdHelpEmbed(ctx, ctx.invoked_subcommand)
+        await self.send_message(ctx.message.channel, embed=embed)
 
     def user_allowed(self, message):
         author = message.author
@@ -311,7 +308,7 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
         owner = await set_bot_owner()
 
         print("-----------------")
-        print("     TCG Bot     ")
+        print("     PieBot     ")
         print("-----------------")
         print(str(bot.user))
         print("\nConnected to:")
@@ -407,6 +404,7 @@ _mentions_transforms = {
 
 _mention_pattern = re.compile('|'.join(_mentions_transforms.keys()))
 
+@asyncio.coroutine
 def _help_command(ctx, *commands : str):
     """Shows this message."""
     bot = ctx.bot
@@ -431,7 +429,7 @@ def _help_command(ctx, *commands : str):
             if command is None:
                 yield from bot.send_message(destination, bot.command_not_found.format(name))
                 return
-            embed = embeds.CommandHelpEmbed(ctx, command)
+            embed = embeds.CmdHelpEmbed(ctx, command)
 
     else:
         name = _mention_pattern.sub(repl, commands[0])
@@ -451,13 +449,13 @@ def _help_command(ctx, *commands : str):
                 yield from bot.send_message(destination, bot.command_has_no_subcommands.format(command, key))
                 return
 
-        embed = embeds.CommandHelpEmbed(ctx, command)
+        embed = embeds.CmdHelpEmbed(ctx, command)
 
     if bot.pm_help is None:
         if len(embed) > 1000:
             destination = ctx.message.author
 
-    yield from bot.send_message(destination, embed)
+    yield from bot.send_message(destination, embed=embed)
 
 
 
@@ -596,17 +594,17 @@ def load_cogs(bot):
     bot.load_extension('cogs.tcg')
     bot.load_extension('cogs.owner')
     owner_cog = bot.get_cog('Owner')
-    tcg_cog = bot.get_cog('tcg')
+    tcg_cog = bot.get_cog('TCG')
     if owner_cog is None:
         print("The owner cog is missing. It contains core functions without "
-              "which Red cannot function. Reinstall.")
+              "which PieBot cannot function. Reinstall.")
         exit(1)
     elif tcg_cog is None:
         print("The TCG cog is missing. It contains core functionality for "
               "this bot. Are you sure you wish to continue?")
         ans = get_answer()
         if ans:
-            print("Starting bot without the TCG cog. . .")
+            print("Starting PieBot without the TCG cog. . .")
         else:
             print("Please follow the instructions carefully and reinstall the bot again.")
             exit(1)
