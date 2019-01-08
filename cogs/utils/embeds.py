@@ -146,9 +146,7 @@ class CogHelpEmbed(RichEmbed):
                                           """.format(descrip, codeblock),
                               color='bot')
 
-CHANGELOG = """
-+ The help command.
-            """
+CHANGELOG = ("+ The help command.")
 
 class BotHelpEmbed(RichEmbed):
     """Help embed for the bot itself"""
