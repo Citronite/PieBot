@@ -247,7 +247,6 @@ class Formatter(commands.HelpFormatter):
             shortened = self.shorten(entry)
             self._paginator.add_line(shortened)
 
-
 def initialize(bot_class=Bot, formatter_class=Formatter):
     formatter = formatter_class(show_check_failure=False)
 
@@ -350,6 +349,7 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
     @bot.event
     async def on_message(message):
         bot.counter["messages_read"] += 1
+
         if bot.user_allowed(message):
             await bot.process_commands(message)
 
@@ -598,7 +598,7 @@ def get_answer():
 
 
 def load_cogs(bot):
-
+    bot.load_extension('cogs.repl')
     bot.load_extension('cogs.tcg')
     bot.load_extension('cogs.owner')
     owner_cog = bot.get_cog('Owner')

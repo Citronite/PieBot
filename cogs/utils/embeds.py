@@ -60,7 +60,7 @@ class RichEmbed(Embed):
     # You can ignore this.
     def __len__(self):
         def clean(arr):
-            return [v for v in arr if v]
+            return [v for v in arr if not not v]
 
         values = ([f.name for f in self.fields] + 
                   [f.value for f in self.fields] + 
