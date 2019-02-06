@@ -7,6 +7,7 @@ from datetime import datetime
 from cogs.utils.colors import BOT
 from cogs.utils.chat_formatting import inline_list
 
+import discord
 
 class Formatter(HelpFormatter):
     def __init__(self):
@@ -50,10 +51,10 @@ class RichEmbed(Embed):
                         icon_url=message.author.avatar_url)
         self.set_author(name=bot.user.name, icon_url=bot.user.avatar_url)
 
-        if kwargs['color'] is 'bot':
-            kwargs['color'] = BOT
-        elif kwargs['color'] is 'author':
+        if (kwargs['color'] is 'author') and (isinstance(message.author, discord.Member)):
             kwargs['color'] = message.author.colour
+        else:
+          kwargs['color'] = BOT
 
         super().__init__(**kwargs, timestamp=datetime.utcnow(), type='rich')
 
@@ -140,10 +141,7 @@ class CogHelpEmbed(RichEmbed):
         codeblock = "\n".join(formatter.format_help_for(ctx, cog))
 
         super().__init__(ctx, title="Help [{.__class__.__name__}]".format(cog),
-                              description="""
-                                        {0}
-                                        {1}
-                                          """.format(descrip, codeblock),
+                              description="{0}\n{1}".format(descrip, codeblock),
                               color='bot')
 
 CHANGELOG = ("+ The help command.")
@@ -151,24 +149,25 @@ CHANGELOG = ("+ The help command.")
 class BotHelpEmbed(RichEmbed):
     """Help embed for the bot itself"""
     def __init__(self, ctx):
-        panda = "[PandaHappy#8851](https://github.com/Quantomistro3178)"
-        pancu = "[Pancake#9696](https://github.com/Pancake31)"
-        chillbar = "[Chillbar](http://chillbar.org/)"
+        # panda = "[PandaHappy#8851](https://github.com/Quantomistro3178)"
+        # pancu = "[Pancake#9696](https://github.com/Pancake31)"
+        # chillbar = "[Chillbar](http://chillbar.org/)"
         discordpy = "[discord.py](https://github.com/Rapptz/discord.py)"
         red = "[Red](https://github.com/Cog-Creators/Red-DiscordBot)"
+        piebot = "[PieBot](https://github.com/Quantomistro3178/PieBot)"
         
         super().__init__(ctx, title="Help",
-                              description="""
-                                        PieBot is an open-source, self-hosted role playing/trading card game bot, created by {panda} and {pancu}, originally for the {chillbar} discord server.
-                                        The bot uses the {discordpy} library for interacting with the Discord API, and was originally forked from {red}.
-                                          """.format(panda=panda, pancu=pancu, chillbar=chillbar, discordpy=discordpy, red=red),
+                              description=("{piebot} is an open-source, self-hosted role playing/trading card game bot."
+                                        	 "The bot uses the {discordpy} library for interacting with the Discord API,"
+																					 "and was originally forked from {red}.")
+                                          .format(piebot=piebot, discordpy=discordpy, red=red),
                               color='bot')
         
         self.add_field(name="Changelog for this version", 
                        value="""```diff\n{}\n```""".format(CHANGELOG),
                        inline=False)
 
-        self.add_field(name="License", value="[MIT License](https://github.com/Quantomistro3178/PieBot/blob/master/LICENSE)")
+        self.add_field(name="License", value="[GPL-3.0 License](https://github.com/Quantomistro3178/PieBot/blob/master/LICENSE)")
         self.add_field(name="Wiki", value="[Link](https://github.com/Quantomistro3178/PieBot/wiki)")
         self.add_field(name="Version", value="Unreleased")
 

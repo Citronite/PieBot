@@ -4,7 +4,7 @@ from cogs.utils import checks
 from cogs.utils.converters import GlobalUser
 from cogs.utils.dataIO import dataIO
 from cogs.utils.chat_formatting import pagify, box
-
+from cogs.utils.colors import BOT
 import importlib
 import traceback
 import logging
@@ -805,7 +805,7 @@ class Owner:
         if isinstance(author, discord.Member):
             colour = author.colour
         else:
-            colour = discord.Colour.red()
+            colour = BOT
 
         description = "Sent by {} {}".format(author, source)
 
@@ -862,7 +862,7 @@ class Owner:
             "and help us improve!\n\n"
             "".format(red_repo, author_repo, server_url))
 
-        embed = discord.Embed(colour=discord.Colour.red())
+        embed = discord.Embed(colour=BOT)
         embed.add_field(name="Instance owned by", value=str(owner))
         embed.add_field(name="Python", value=py_version)
         embed.add_field(name="discord.py", value=dpy_version)
@@ -990,7 +990,7 @@ class Owner:
         if not os.path.isdir(".git"):
             msg = "This instance of Red hasn't been installed with git."
             e = discord.Embed(title=msg,
-                              colour=discord.Colour.red())
+                              colour=BOT)
             return e
 
         commands = " && ".join((
@@ -1010,7 +1010,7 @@ class Owner:
 
         embed = discord.Embed(title="Updates of " + repo_name,
                               description="Last three updates",
-                              colour=discord.Colour.red(),
+                              colour=BOT,
                               url="{}/tree/{}".format(url, branch))
 
         for line in commits.split('\n'):
