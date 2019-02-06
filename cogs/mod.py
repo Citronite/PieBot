@@ -745,7 +745,7 @@ class Mod:
         """Deletes last X messages from specified user.
 
         Examples:
-        cleanup user @\u200bTwentysix 2
+        cleanup user @\u200bPieBot 2
         cleanup user PieBot 6"""
 
         channel = ctx.message.channel

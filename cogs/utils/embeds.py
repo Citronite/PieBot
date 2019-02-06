@@ -171,4 +171,4 @@ class BotHelpEmbed(RichEmbed):
         self.add_field(name="License", value="[MIT License](https://github.com/Quantomistro3178/PieBot/blob/master/LICENSE)")
         self.add_field(name="Wiki", value="[Link](https://github.com/Quantomistro3178/PieBot/wiki)")
         self.add_field(name="Version", value="Unreleased")
-#        self.set_thumbnail(url=ctx.bot.user.avatar_url)
+
