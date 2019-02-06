@@ -8,6 +8,15 @@ from cogs.utils.chat_formatting import pagify, box
 import importlib
 import traceback
 import logging
+from discord.ext import commands
+from cogs.utils import checks
+from cogs.utils.converters import GlobalUser
+from cogs.utils.dataIO import dataIO
+from cogs.utils.chat_formatting import pagify, box
+
+import importlib
+import traceback
+import logging
 import asyncio
 import threading
 import datetime
@@ -828,47 +837,29 @@ class Owner:
         else:
             await self.bot.say("Your message has been sent.")
 
-    @commands.command()
-    async def info(self):
+    @commands.command(pass_context=True)
+    async def info(self, ctx):
         """Shows info about Red"""
-        author_repo = "https://github.com/Twentysix26"
-        red_repo = author_repo + "/Red-DiscordBot"
-        server_url = "https://discord.gg/red"
-        dpy_repo = "https://github.com/Rapptz/discord.py"
-        python_url = "https://www.python.org/"
-        since = datetime.datetime(2016, 1, 2, 0, 0)
-        days_since = (datetime.datetime.utcnow() - since).days
-        dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
-        py_version = "[{}.{}.{}]({})".format(*os.sys.version_info[:3],
-                                             python_url)
 
-        owner_set = self.bot.settings.owner is not None
-        owner = self.bot.settings.owner if owner_set else None
-        if owner:
-            owner = discord.utils.get(self.bot.get_all_members(), id=owner)
-            if not owner:
-                try:
-                    owner = await self.bot.get_user_info(self.bot.settings.owner)
-                except:
-                    owner = None
-        if not owner:
-            owner = "Unknown"
+        g_prefixes = ",  ".join(self.bot.settings.prefixes)
+        s_prefixes = ",  ".join(self.bot.settings.get_server_prefixes(ctx.message.server))
+        s_prefixes = s_prefixes if s_prefixes != g_prefixes else "--/--"
+        cogs = [type(c).__name__ for c in self.bot.cogs.values()]
+            
+        description=("""To get help with specific cogs, use `{0}help <cog>`
+                       To get help with specific commands, use `{0}help <command>`
+                       For more information about the bot, use `{0}help bot`
+                       
+                       You can also visit the [bot's wiki](https://github.com/Quantomistro3178/PieBot/wiki) to get further 
+                       help, or join the [support server](https://discord.gg/rEM9gFN) if you have any questions!""".format(g_prefixes))
 
-        about = (
-            "This is an instance of [Red, an open source Discord bot]({}) "
-            "created by [Twentysix]({}) and improved by many.\n\n"
-            "Red is backed by a passionate community who contributes and "
-            "creates content for everyone to enjoy. [Join us today]({}) "
-            "and help us improve!\n\n"
-            "".format(red_repo, author_repo, server_url))
-
-        embed = discord.Embed(colour=discord.Colour.red())
-        embed.add_field(name="Instance owned by", value=str(owner))
-        embed.add_field(name="Python", value=py_version)
-        embed.add_field(name="discord.py", value=dpy_version)
-        embed.add_field(name="About Red", value=about, inline=False)
-        embed.set_footer(text="Bringing joy since 02 Jan 2016 (over "
-                         "{} days ago!)".format(days_since))
+        embed = discord.Embed(colour=0x3986c4)
+        embed.set_thumbnail(url=self.bot.user.avatar_url)
+        embed.add_field(name="Help", value=description)
+        embed.add_field(name="Global Prefixes", value=g_prefixes, inline=False)
+        embed.add_field(name="Server Prefixes", value=s_prefixes, inline=True)
+        embed.add_field(name="Cogs", value="```{}```".format(",  ".join(cogs)), inline=False)
+        embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
 
         try:
             await self.bot.say(embed=embed)
