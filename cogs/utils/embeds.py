@@ -82,14 +82,19 @@ class HelpEmbed(RichEmbed):
         s_prefixes = s_prefixes if s_prefixes != g_prefixes else "--/--"
 
         cogs = [type(c).__name__ for c in bot.cogs.values()]
+
+        wiki = "[bot's wiki](https://github.com/Quantomistro3178/PieBot/wiki)"
+        support = "[support server](https://discord.gg/rEM9gFN)"
             
+        descrip = ("To get help with specific cogs, use `{p}help <cog>`\n"
+                  "To get help with specific commands, use `{p}help <command>`\n"
+                  "For more information about the bot, use `{p}help bot`\n\n"
+                  "You can also visit the {wiki} to get further"
+                  "help, or join the {support} if you have any questions!"
+                  ).format(p=ctx.prefix, wiki=wiki, support=support)
+
         super().__init__(ctx, title="Help",
-                          description=("To get help with specific cogs, use `{0}help <cog>`\n"
-                                      "To get help with specific commands, use `{0}help <command>`\n"
-                                      "For more information about the bot, use `{0}help bot`\n\n"
-                                    	"You can also visit the [bot's wiki](https://github.com/Quantomistro3178/PieBot/wiki) to get further"
-                                    	"help, or join the [support server](https://discord.gg/rEM9gFN) if you have any questions!"
-                                      ).format(ctx.prefix),
+                          description=descrip,
                           color='bot')
 
         self.set_thumbnail(url=bot.user.avatar_url)
@@ -150,8 +155,8 @@ class BotHelpEmbed(RichEmbed):
         red = "[Red V2](https://github.com/Cog-Creators/Red-DiscordBot)"
         piebot = "[PieBot](https://github.com/Quantomistro3178/PieBot)"
         
-        descrip = ("This bot is an instance of {piebot}, an open-source,"
-								  "self-hosted role playing/trading card game bot.\n"
+        descrip = ("This bot is an instance of {piebot}, an open-source, "
+								  "self-hosted role playing / trading card game bot.\n"
                   "PieBot uses the {discordpy} library for interacting"
 									"with the Discord API, and was originally forked from {red}."
 				          ).format(piebot=piebot, discordpy=discordpy, red=red)

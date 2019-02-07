@@ -430,8 +430,6 @@ def _help_command(ctx, *commands : str):
             embed = embeds.CogHelpEmbed(ctx, command)
         elif commands[0] == 'bot':
             embed = embeds.BotHelpEmbed(ctx)
-            yield from bot.send_message(destination, embed=embed)
-            return
         else:
             command = bot.commands.get(name)
             if command is None:
@@ -464,6 +462,7 @@ def _help_command(ctx, *commands : str):
             destination = ctx.message.author
 
     yield from bot.send_message(destination, embed=embed)
+    return
 
 
 
