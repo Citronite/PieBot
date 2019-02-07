@@ -417,7 +417,7 @@ def _help_command(ctx, *commands : str):
     def repl(obj):
         return _mentions_transforms.get(obj.group(0), '')
 
-    # help by itself just lists our own commands.
+
     if len(commands) == 0:
         embed = embeds.HelpEmbed(ctx)
             

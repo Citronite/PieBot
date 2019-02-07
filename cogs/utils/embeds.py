@@ -145,29 +145,21 @@ class CogHelpEmbed(RichEmbed):
 
 class BotHelpEmbed(RichEmbed):
     """Help embed for the bot itself"""
-    async def __init__(self, ctx):
+    def __init__(self, ctx):
         discordpy = "[discord.py](https://github.com/Rapptz/discord.py)"
         red = "[Red V2](https://github.com/Cog-Creators/Red-DiscordBot)"
         piebot = "[PieBot](https://github.com/Quantomistro3178/PieBot)"
         
-        super().__init__(ctx, title="Help",
-                              description=("{piebot} is an open-source, self-hosted role playing/trading card game bot.\n"
-                                          "The bot uses the {discordpy} library for interacting with the Discord API,"
-																					"and was originally forked from {red}."
-				                                  ).format(piebot=piebot, discordpy=discordpy, red=red),
+        descrip = ("This bot is an instance of {piebot}, an open-source,"
+								  "self-hosted role playing/trading card game bot.\n"
+                  "PieBot uses the {discordpy} library for interacting"
+									"with the Discord API, and was originally forked from {red}."
+				          ).format(piebot=piebot, discordpy=discordpy, red=red)
+
+        super().__init__(ctx, title="Bot Info",
+                              description=descrip,
                               color='bot')
-        owner_set = ctx.bot.settings.owner is not None
-        owner = ctx.bot.settings.owner if owner_set else None
-        if owner:
-            owner = discord.utils.get(ctx.bot.get_all_members(), id=owner)
-            if not owner:
-                try:
-                    owner = await ctx.bot.get_user_info(ctx.bot.settings.owner)
-                except:
-                    owner = None
-        if not owner:
-            owner = "Unknown"
 				
-        self.add_field(name="Bot Owner", value=str(owner))
+        self.add_field(name="PieBot Version", value="Unreleased")
         self.add_field(name="License", value="[GPL-3.0 License](https://github.com/Quantomistro3178/PieBot/blob/master/LICENSE)")
         self.add_field(name="Wiki", value="[Link](https://github.com/Quantomistro3178/PieBot/wiki)")
