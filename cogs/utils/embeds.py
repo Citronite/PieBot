@@ -1,5 +1,5 @@
 import inspect
-
+import discord
 from discord.ext.commands.formatter import HelpFormatter, Paginator
 from discord.ext.commands.core import Command
 from discord import Embed
@@ -146,29 +146,32 @@ class CogHelpEmbed(RichEmbed):
                                           """.format(descrip, codeblock),
                               color='bot')
 
-CHANGELOG = ("+ The help command.")
 
 class BotHelpEmbed(RichEmbed):
     """Help embed for the bot itself"""
-    def __init__(self, ctx):
-        panda = "[PandaHappy#8851](https://github.com/Quantomistro3178)"
-        pancu = "[Pancake#9696](https://github.com/Pancake31)"
-        chillbar = "[Chillbar](http://chillbar.org/)"
+    async def __init__(self, ctx):
         discordpy = "[discord.py](https://github.com/Rapptz/discord.py)"
-        red = "[Red](https://github.com/Cog-Creators/Red-DiscordBot)"
+        red = "[Red V2](https://github.com/Cog-Creators/Red-DiscordBot)"
+        piebot = "[PieBot](https://github.com/Quantomistro3178/PieBot)"
         
         super().__init__(ctx, title="Help",
-                              description="""
-                                        PieBot is an open-source, self-hosted role playing/trading card game bot, created by {panda} and {pancu}, originally for the {chillbar} discord server.
-                                        The bot uses the {discordpy} library for interacting with the Discord API, and was originally forked from {red}.
-                                          """.format(panda=panda, pancu=pancu, chillbar=chillbar, discordpy=discordpy, red=red),
+                              description=("{piebot} is an open-source, self-hosted role playing/trading card game bot.\n"
+                                          "The bot uses the {discordpy} library for interacting with the Discord API,"
+																					"and was originally forked from {red}."
+				                                  ).format(piebot=piebot, discordpy=discordpy, red=red),
                               color='bot')
-        
-        self.add_field(name="Changelog for this version", 
-                       value="""```diff\n{}\n```""".format(CHANGELOG),
-                       inline=False)
-
-        self.add_field(name="License", value="[MIT License](https://github.com/Quantomistro3178/PieBot/blob/master/LICENSE)")
+        owner_set = ctx.bot.settings.owner is not None
+        owner = ctx.bot.settings.owner if owner_set else None
+        if owner:
+            owner = discord.utils.get(ctx.bot.get_all_members(), id=owner)
+            if not owner:
+                try:
+                    owner = await ctx.bot.get_user_info(ctx.bot.settings.owner)
+                except:
+                    owner = None
+        if not owner:
+            owner = "Unknown"
+				
+        self.add_field(name="Bot Owner", value=str(owner))
+        self.add_field(name="License", value="[GPL-3.0 License](https://github.com/Quantomistro3178/PieBot/blob/master/LICENSE)")
         self.add_field(name="Wiki", value="[Link](https://github.com/Quantomistro3178/PieBot/wiki)")
-        self.add_field(name="Version", value="Unreleased")
-#        self.set_thumbnail(url=ctx.bot.user.avatar_url)
