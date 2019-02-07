@@ -288,7 +288,7 @@ def run_bot(autorestart):
         if not INTERACTIVE_MODE:
             exit(1)
 
-    cmd = (interpreter, "bot.py")
+    cmd = (interpreter, "piebot.py")
 
     while True:
         try:
