@@ -1,5 +1,5 @@
 from discord.ext import commands
-import bot
+import piebot
 from cogs.utils import checks
 from cogs.utils.dataIO import dataIO
 from cogs.utils.chat_formatting import pagify
@@ -952,7 +952,7 @@ def check_files():
             dataIO.save_json(settings_path, current)
 
 
-def setup(bot: bot.Bot):
+def setup(bot: piebot.Bot):
     check_folders()
     check_files()
     bot.add_cog(REPL(bot))
