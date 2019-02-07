@@ -84,14 +84,12 @@ class HelpEmbed(RichEmbed):
         cogs = [type(c).__name__ for c in bot.cogs.values()]
             
         super().__init__(ctx, title="Help",
-                          description="""
-                                    To get help with specific cogs, use `{0}help <cog>`
-                                    To get help with specific commands, use `{0}help <command>`
-                                    For more information about the bot, use `{0}help bot`
-
-                                    You can also visit the [bot's wiki](https://github.com/Quantomistro3178/PieBot/wiki) to get further 
-                                    help, or join the [support server](https://discord.gg/rEM9gFN) if you have any questions!
-                                    """.format(ctx.prefix),
+                          description=("To get help with specific cogs, use `{0}help <cog>`\n"
+                                      "To get help with specific commands, use `{0}help <command>`\n"
+                                      "For more information about the bot, use `{0}help bot`\n\n"
+                                    	"You can also visit the [bot's wiki](https://github.com/Quantomistro3178/PieBot/wiki) to get further"
+                                    	"help, or join the [support server](https://discord.gg/rEM9gFN) if you have any questions!"
+                                      ).format(ctx.prefix),
                           color='bot')
 
         self.set_thumbnail(url=bot.user.avatar_url)
@@ -159,8 +157,8 @@ class BotHelpEmbed(RichEmbed):
         super().__init__(ctx, title="Help",
                               description=("{piebot} is an open-source, self-hosted role playing/trading card game bot."
                                         	 "The bot uses the {discordpy} library for interacting with the Discord API,"
-																					 "and was originally forked from {red}.")
-                                          .format(piebot=piebot, discordpy=discordpy, red=red),
+																					 "and was originally forked from {red}."
+															            ).format(piebot=piebot, discordpy=discordpy, red=red),
                               color='bot')
         
         self.add_field(name="Changelog for this version", 

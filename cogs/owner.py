@@ -8,6 +8,16 @@ from cogs.utils.colors import BOT
 import importlib
 import traceback
 import logging
+from discord.ext import commands
+from cogs.utils import checks
+from cogs.utils.converters import GlobalUser
+from cogs.utils.dataIO import dataIO
+from cogs.utils.chat_formatting import pagify, box
+from cogs.utils.embeds import BotHelpEmbed
+
+import importlib
+import traceback
+import logging
 import asyncio
 import threading
 import datetime
@@ -828,48 +838,10 @@ class Owner:
         else:
             await self.bot.say("Your message has been sent.")
 
-    @commands.command()
-    async def info(self):
+    @commands.command(pass_context=True)
+    async def info(self, ctx):
         """Shows info about Red"""
-        author_repo = "https://github.com/Twentysix26"
-        red_repo = author_repo + "/Red-DiscordBot"
-        server_url = "https://discord.gg/red"
-        dpy_repo = "https://github.com/Rapptz/discord.py"
-        python_url = "https://www.python.org/"
-        since = datetime.datetime(2016, 1, 2, 0, 0)
-        days_since = (datetime.datetime.utcnow() - since).days
-        dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
-        py_version = "[{}.{}.{}]({})".format(*os.sys.version_info[:3],
-                                             python_url)
-
-        owner_set = self.bot.settings.owner is not None
-        owner = self.bot.settings.owner if owner_set else None
-        if owner:
-            owner = discord.utils.get(self.bot.get_all_members(), id=owner)
-            if not owner:
-                try:
-                    owner = await self.bot.get_user_info(self.bot.settings.owner)
-                except:
-                    owner = None
-        if not owner:
-            owner = "Unknown"
-
-        about = (
-            "This is an instance of [Red, an open source Discord bot]({}) "
-            "created by [Twentysix]({}) and improved by many.\n\n"
-            "Red is backed by a passionate community who contributes and "
-            "creates content for everyone to enjoy. [Join us today]({}) "
-            "and help us improve!\n\n"
-            "".format(red_repo, author_repo, server_url))
-
-        embed = discord.Embed(colour=BOT)
-        embed.add_field(name="Instance owned by", value=str(owner))
-        embed.add_field(name="Python", value=py_version)
-        embed.add_field(name="discord.py", value=dpy_version)
-        embed.add_field(name="About Red", value=about, inline=False)
-        embed.set_footer(text="Bringing joy since 02 Jan 2016 (over "
-                         "{} days ago!)".format(days_since))
-
+        embed = BotHelpEmbed(ctx)
         try:
             await self.bot.say(embed=embed)
         except discord.HTTPException:
