@@ -161,9 +161,8 @@ class BotHelpEmbed(RichEmbed):
 
         super().__init__(ctx, title="Help",
                               description=("This bot is an instance of {piebot}, an open-source, self-hosted role" 
-                                          "playing/trading card game bot.\n"
-                                          "PieBot uses the {discordpy} library for interacting with the Discord API,"
-																					"and was originally forked from {red}.\n"
+                                          "playing/trading card game bot. PieBot uses the {discordpy} library for"
+                                          "interacting with the Discord API, and was originally forked from {red}.\n"
                                           "For further questions, feel free to visit the {support}"
 				                                  ).format(piebot=piebot, discordpy=discordpy, red=red, support=support),
                               color='bot')
