@@ -87,14 +87,17 @@ class HelpEmbed(RichEmbed):
             s_prefixes = s_prefixes if s_prefixes else "--/--"
 
         cogs = [type(c).__name__ for c in bot.cogs.values()]
-            
+
+        wiki = "[bot's wiki](https://github.com/Quantomistro3178/PieBot/wiki)"
+        support = "[support server](https://discord.gg/rEM9gFN)"
+ 
         super().__init__(ctx, title="Help",
-                          description=("To get help with specific cogs, use `{0}help <cog>`\n"
-                                      "To get help with specific commands, use `{0}help <command>`\n"
-                                      "For more information about the bot, use `{0}help bot`\n\n"
-                                      "You can also visit the [bot's wiki](https://github.com/Quantomistro3178/PieBot/wiki) to get further "
-                                      "help, or join the [support server](https://discord.gg/rEM9gFN) if you have any questions!"
-													            ).format(ctx.prefix),
+                          description=("To get help with specific cogs, use `{p}help <cog>`\n"
+                                      "To get help with specific commands, use `{p}help <command>`\n"
+                                      "For more information about the bot, use `{p}help bot`\n\n"
+                                      "You can also visit the {wiki} to get further "
+                                      "help, or join the {support} if you have any questions!"
+													            ).format(p=ctx.prefix, wiki=wiki, support=support),
                           color='bot')
 
         self.set_thumbnail(url=bot.user.avatar_url)
@@ -154,14 +157,17 @@ class BotHelpEmbed(RichEmbed):
         discordpy = "[discord.py](https://github.com/Rapptz/discord.py)"
         red = "[Red V2](https://github.com/Cog-Creators/Red-DiscordBot)"
         piebot = "[PieBot](https://github.com/Quantomistro3178/PieBot)"
-        
+        support = "[support server](https://discord.gg/rEM9gFN)"
+
         super().__init__(ctx, title="Help",
-                              description=("{piebot} is an open-source, self-hosted role playing/trading card game bot.\n"
-                                          "The bot uses the {discordpy} library for interacting with the Discord API,"
-																					"and was originally forked from {red}."
-				                                  ).format(piebot=piebot, discordpy=discordpy, red=red),
+                              description=("This bot is an instance of {piebot}, an open-source, self-hosted role" 
+                                          "playing/trading card game bot.\n"
+                                          "PieBot uses the {discordpy} library for interacting with the Discord API,"
+																					"and was originally forked from {red}.\n"
+                                          "For further questions, feel free to visit the {support}"
+				                                  ).format(piebot=piebot, discordpy=discordpy, red=red, support=support),
                               color='bot')
-				
+
         self.add_field(name="PieBot Version", value="Unreleased")
         self.add_field(name="License", value="[GPL-3.0 License](https://github.com/Quantomistro3178/PieBot/blob/master/LICENSE)")
         self.add_field(name="Wiki", value="[Link](https://github.com/Quantomistro3178/PieBot/wiki)")

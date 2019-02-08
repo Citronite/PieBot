@@ -842,6 +842,21 @@ class Owner:
     async def info(self, ctx):
         """Shows info about Red"""
         embed = BotHelpEmbed(ctx)
+        owner_set = ctx.bot.settings.owner is not None
+        owner = ctx.bot.settings.owner if owner_set else None
+        if owner:
+            owner = discord.utils.get(ctx.bot.get_all_members(), id=owner)
+            if not owner:
+                try:
+                    owner = await ctx.bot.get_user_info(ctx.bot.settings.owner)
+                except:
+                    owner = None
+        if not owner:
+            owner = "Unknown"
+
+        text = "Instance Owner: {}".format(str(owner))
+        icon = owner.avatar_url if isinstance(owner, discord.User) else ctx.bot.user.avatar_url
+        embed.set_footer(text=text, icon_url=icon)
         try:
             await self.bot.say(embed=embed)
         except discord.HTTPException:
