@@ -39,7 +39,7 @@ from io import TextIOWrapper
 #                 https://github.com/Rapptz/RoboDanny/
 
 description = "PieBot - An entertainment bot by PandaHappy & Pancake3"
-
+VERSION = "Unreleased"
 
 class Bot(commands.Bot):
     def __init__(self, *args, **kwargs):
@@ -64,6 +64,7 @@ class Bot(commands.Bot):
         self.logger = set_logger(self)
         self._last_exception = None
         self.oauth_url = ""
+        self.version = VERSION
 
         try:
             self._cog_registry = dataIO.load_json("data/bot/cogs.json")

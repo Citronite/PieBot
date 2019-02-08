@@ -7,8 +7,6 @@ from datetime import datetime
 from cogs.utils.colors import BOT
 from cogs.utils.chat_formatting import inline_list
 
-import discord
-
 class Formatter(HelpFormatter):
     def __init__(self):
         super().__init__()
@@ -45,18 +43,23 @@ class Formatter(HelpFormatter):
 
 class RichEmbed(Embed):
     def __init__(self, ctx, **kwargs):
-        message = ctx.message
+        author = ctx.message.author
         bot = ctx.bot
-        self.set_footer(text="Requested by: {}".format(message.author.name),
-                        icon_url=message.author.avatar_url)
-        self.set_author(name=bot.user.name, icon_url=bot.user.avatar_url)
 
-        if (kwargs['color'] is 'author') and (isinstance(message.author, discord.Member)):
-            kwargs['color'] = message.author.colour
-        else:
-          kwargs['color'] = BOT
+        if kwargs['color'] is 'bot':
+            kwargs['color'] = BOT
+        elif kwargs['color'] is 'author':
+            if isinstance(author, discord.Member):
+                kwargs['color'] = author.colour
+            else:
+                kwargs['color'] = BOT
 
         super().__init__(**kwargs, timestamp=datetime.utcnow(), type='rich')
+
+        self.set_footer(text="Requested by: {}".format(author.name),
+                        icon_url=author.avatar_url)
+        self.set_author(name=bot.user.name, icon_url=bot.user.avatar_url)
+
 
     # You can ignore this.
     def __len__(self):
@@ -76,25 +79,25 @@ class HelpEmbed(RichEmbed):
     """
     def __init__(self, ctx):
         bot = ctx.bot
-        msg = ctx.message
+        server = ctx.message.server
         g_prefixes = ",  ".join(inline_list(bot.settings.prefixes))
-        s_prefixes = ",  ".join(inline_list(bot.settings.get_server_prefixes(msg.server)))
-        s_prefixes = s_prefixes if s_prefixes != g_prefixes else "--/--"
+        s_prefixes = '--/--'
+        if server:
+            s_prefixes = ",  ".join(inline_list(bot.settings.get_server_prefixes(server)))
+            s_prefixes = s_prefixes if s_prefixes else "--/--"
 
         cogs = [type(c).__name__ for c in bot.cogs.values()]
 
         wiki = "[bot's wiki](https://github.com/Quantomistro3178/PieBot/wiki)"
         support = "[support server](https://discord.gg/rEM9gFN)"
-            
-        descrip = ("To get help with specific cogs, use `{p}help <cog>`\n"
-                  "To get help with specific commands, use `{p}help <command>`\n"
-                  "For more information about the bot, use `{p}help bot`\n\n"
-                  "You can also visit the {wiki} to get further"
-                  "help, or join the {support} if you have any questions!"
-                  ).format(p=ctx.prefix, wiki=wiki, support=support)
-
+ 
         super().__init__(ctx, title="Help",
-                          description=descrip,
+                          description=("To get help with specific cogs, use `{p}help <cog>`\n"
+                                      "To get help with specific commands, use `{p}help <command>`\n"
+                                      "For more information about the bot, use `{p}help bot`\n\n"
+                                      "You can also visit the {wiki} to get further "
+                                      "help, or join the {support} if you have any questions!"
+													            ).format(p=ctx.prefix, wiki=wiki, support=support),
                           color='bot')
 
         self.set_thumbnail(url=bot.user.avatar_url)
@@ -154,17 +157,19 @@ class BotHelpEmbed(RichEmbed):
         discordpy = "[discord.py](https://github.com/Rapptz/discord.py)"
         red = "[Red V2](https://github.com/Cog-Creators/Red-DiscordBot)"
         piebot = "[PieBot](https://github.com/Quantomistro3178/PieBot)"
+        support = "[support server](https://discord.gg/rEM9gFN)"
         
         descrip = ("This bot is an instance of {piebot}, an open-source, "
-								  "self-hosted role playing / trading card game bot.\n"
+								  "self-hosted role playing / trading card game bot. "
                   "PieBot uses the {discordpy} library for interacting"
-									"with the Discord API, and was originally forked from {red}."
-				          ).format(piebot=piebot, discordpy=discordpy, red=red)
+									"with the Discord API, and was originally forked from {red}.\n\n"
+                  "For further questions, feel free to visit the {support}!"
+				          ).format(piebot=piebot, discordpy=discordpy, red=red, support=support)
 
         super().__init__(ctx, title="Bot Info",
                               description=descrip,
                               color='bot')
 				
-        self.add_field(name="PieBot Version", value="Unreleased")
+        self.add_field(name="PieBot Version", value=ctx.bot.version)
         self.add_field(name="License", value="[GPL-3.0 License](https://github.com/Quantomistro3178/PieBot/blob/master/LICENSE)")
         self.add_field(name="Wiki", value="[Link](https://github.com/Quantomistro3178/PieBot/wiki)")

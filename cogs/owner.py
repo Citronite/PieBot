@@ -263,7 +263,7 @@ class Owner:
 
     @commands.group(name="set", pass_context=True)
     async def _set(self, ctx):
-        """Changes Red's core settings"""
+        """Changes the bot's core settings"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
             return
@@ -317,7 +317,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def prefix(self, ctx, *prefixes):
-        """Sets Red's global prefixes
+        """Sets the global prefixes
 
         Accepts multiple prefixes separated by a space. Enclose in double
         quotes if a prefix contains spaces.
@@ -337,7 +337,7 @@ class Owner:
     @_set.command(pass_context=True, no_pm=True)
     @checks.serverowner_or_permissions(administrator=True)
     async def serverprefix(self, ctx, *prefixes):
-        """Sets Red's prefixes for this server
+        """Sets the prefixes for this server
 
         Accepts multiple prefixes separated by a space. Enclose in double
         quotes if a prefix contains spaces.
@@ -370,7 +370,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def name(self, ctx, *, name):
-        """Sets Red's name"""
+        """Sets the bot's name"""
         name = name.strip()
         if name != "":
             try:
@@ -390,7 +390,7 @@ class Owner:
     @_set.command(pass_context=True, no_pm=True)
     @checks.is_owner()
     async def nickname(self, ctx, *, nickname=""):
-        """Sets Red's nickname
+        """Sets the bot's nickname
 
         Leaving this empty will remove it."""
         nickname = nickname.strip()
@@ -406,7 +406,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def game(self, ctx, *, game=None):
-        """Sets Red's playing status
+        """Sets the bot's playing status
 
         Leaving this empty will clear it."""
 
@@ -427,7 +427,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def status(self, ctx, *, status=None):
-        """Sets Red's status
+        """Sets the bot's status
 
         Statuses:
             online
@@ -462,7 +462,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def stream(self, ctx, streamer=None, *, stream_title=None):
-        """Sets Red's streaming status
+        """Sets the bot's streaming status
 
         Leaving both streamer and stream_title empty will clear it."""
 
@@ -488,7 +488,7 @@ class Owner:
     @_set.command()
     @checks.is_owner()
     async def avatar(self, url):
-        """Sets Red's avatar"""
+        """Sets the bot's avatar"""
         try:
             async with self.session.get(url) as r:
                 data = await r.read()
@@ -504,7 +504,7 @@ class Owner:
     @_set.command(name="token")
     @checks.is_owner()
     async def _token(self, token):
-        """Sets Red's login token"""
+        """Sets the login token"""
         if len(token) < 50:
             await self.bot.say("Invalid token.")
         else:
@@ -544,7 +544,7 @@ class Owner:
 
     @blacklist.command(name="add")
     async def _blacklist_add(self, user: GlobalUser):
-        """Adds user to Red's global blacklist"""
+        """Adds user to the global blacklist"""
         if user.id not in self.global_ignores["blacklist"]:
             self.global_ignores["blacklist"].append(user.id)
             self.save_global_ignores()
@@ -554,7 +554,7 @@ class Owner:
 
     @blacklist.command(name="remove")
     async def _blacklist_remove(self, user: GlobalUser):
-        """Removes user from Red's global blacklist"""
+        """Removes user from the global blacklist"""
         if user.id in self.global_ignores["blacklist"]:
             self.global_ignores["blacklist"].remove(user.id)
             self.save_global_ignores()
@@ -586,13 +586,13 @@ class Owner:
         """Whitelist management commands
 
         If the whitelist is not empty, only whitelisted users will
-        be able to use Red"""
+        be able to use the bot"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
 
     @whitelist.command(name="add")
     async def _whitelist_add(self, user: GlobalUser):
-        """Adds user to Red's global whitelist"""
+        """Adds user to global whitelist"""
         if user.id not in self.global_ignores["whitelist"]:
             if not self.global_ignores["whitelist"]:
                 msg = "\nNon-whitelisted users will be ignored."
@@ -606,7 +606,7 @@ class Owner:
 
     @whitelist.command(name="remove")
     async def _whitelist_remove(self, user: GlobalUser):
-        """Removes user from Red's global whitelist"""
+        """Removes user from global whitelist"""
         if user.id in self.global_ignores["whitelist"]:
             self.global_ignores["whitelist"].remove(user.id)
             self.save_global_ignores()
@@ -635,7 +635,7 @@ class Owner:
     @commands.command()
     @checks.is_owner()
     async def shutdown(self, silently : bool=False):
-        """Shuts down Red"""
+        """Shuts down PieBot"""
         wave = "\N{WAVING HAND SIGN}"
         skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
         try: # We don't want missing perms to stop our shutdown
@@ -648,9 +648,9 @@ class Owner:
     @commands.command()
     @checks.is_owner()
     async def restart(self, silently : bool=False):
-        """Attempts to restart Red
+        """Attempts to restart bot
 
-        Makes Red quit with exit code 26
+        Makes bot quit with exit code 26
         The restart is not guaranteed: it must be dealt
         with by the process manager in use"""
         try:
@@ -840,8 +840,23 @@ class Owner:
 
     @commands.command(pass_context=True)
     async def info(self, ctx):
-        """Shows info about Red"""
+        """Shows info about PieBot"""
         embed = BotHelpEmbed(ctx)
+        owner_set = ctx.bot.settings.owner is not None
+        owner = ctx.bot.settings.owner if owner_set else None
+        if owner:
+            owner = discord.utils.get(ctx.bot.get_all_members(), id=owner)
+            if not owner:
+                try:
+                    owner = await ctx.bot.get_user_info(ctx.bot.settings.owner)
+                except:
+                    owner = None
+        if not owner:
+            owner = "Unknown"
+
+        text = "Instance Owner: {}".format(str(owner))
+        icon = owner.avatar_url if isinstance(owner, discord.User) else ctx.bot.user.avatar_url
+        embed.set_footer(text=text, icon_url=icon)
         try:
             await self.bot.say(embed=embed)
         except discord.HTTPException:
@@ -850,15 +865,15 @@ class Owner:
 
     @commands.command()
     async def uptime(self):
-        """Shows Red's uptime"""
+        """Shows bot's uptime"""
         since = self.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
         passed = self.get_bot_uptime()
         await self.bot.say("Been up for: **{}** (since {} UTC)"
                            "".format(passed, since))
 
-    @commands.command()
-    async def version(self):
-        """Shows Red's current version"""
+    @commands.command(pass_context=True)
+    async def version(self, ctx):
+        """Shows bot's current version"""
         response = self.bot.loop.run_in_executor(None, self._get_version)
         result = await asyncio.wait_for(response, timeout=10)
         try:
@@ -960,7 +975,7 @@ class Owner:
 
     def _get_version(self):
         if not os.path.isdir(".git"):
-            msg = "This instance of Red hasn't been installed with git."
+            msg = "This instance of PieBot hasn't been installed with git."
             e = discord.Embed(title=msg,
                               colour=BOT)
             return e
@@ -980,19 +995,31 @@ class Owner:
             url = 'https://{}/{}'.format(domain, resource)
         repo_name = url.split("/")[-1]
 
-        embed = discord.Embed(title="Updates of " + repo_name,
-                              description="Last three updates",
+        embed = discord.Embed(title= repo_name + " Updates",
+                              description="Current Version: **{}**".format(self.bot.version),
                               colour=BOT,
-                              url="{}/tree/{}".format(url, branch))
-
+                              url="{}/tree/{}".format(url, branch),
+                              timestamp=datetime.datetime.utcnow())
+        updates = []
         for line in commits.split('\n'):
             if not line:
                 continue
             when, commit, chash = line.split("|")
             commit_url = url + "/commit/" + chash
             content = "[{}]({}) - {} ".format(chash[:6], commit_url, commit)
-            embed.add_field(name=when, value=content, inline=False)
+            updates.append("{} | **{}**".format(content, when))
 
+        red_repo = "https://github.com/Cog-Creators/Red-DiscordBot"
+        dpy_repo = "https://github.com/Rapptz/discord.py"
+        python_url = "https://www.python.org/"
+        dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
+        py_version = "[{}.{}.{}]({})".format(*os.sys.version_info[:3],
+                                            python_url)
+
+        embed.add_field(name="Last three updates:", value="\n".join(updates), inline=False)
+        embed.add_field(name="Red-DiscordBot", value="[Red V2]({})".format(red_repo))
+        embed.add_field(name="discord.py", value=dpy_version)
+        embed.add_field(name="Python", value=py_version)
         embed.set_footer(text="Total commits: " + ncommits)
 
         return embed
