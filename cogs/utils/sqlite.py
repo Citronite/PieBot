@@ -29,5 +29,8 @@ class Sqlite(sqlite3.Connection):
           	return self.cursor.fetchmany(size)
 
     def select(self, query, size = 1):
-        self.exec(query)
+        self.c_exec(query)
         return self.fetch(size)
+    def selectmany(self, *args, **kwargs):
+        self.c_execmany(*args, **kwargs)
+        return self.fetch(0)
