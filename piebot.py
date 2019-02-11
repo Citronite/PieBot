@@ -598,7 +598,7 @@ def get_answer():
 
 
 def load_cogs(bot):
-    bot.load_extension('cogs.repl')
+    bot.load_extension('cogs.general')
     bot.load_extension('cogs.tcg')
     bot.load_extension('cogs.owner')
     owner_cog = bot.get_cog('Owner')
