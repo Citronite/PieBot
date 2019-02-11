@@ -26,8 +26,8 @@ from cogs.utils.chat_formatting import inline
 from collections import Counter
 from io import TextIOWrapper
 
-# PieBot, a Discord Trading Card Game bot by PandaHappy and Pancake3,
-#                    built on Red and discord.py.
+#         PieBot, a Discord Trading Card Game bot by PandaHappy,
+#                    built on Red V2 and discord.py.
 #             https://github.com/Quantomistro3178/tcg-bot
 #
 # Red, a Discord bot by Twentysix, based on discord.py and its command
@@ -38,7 +38,7 @@ from io import TextIOWrapper
 #                     originally made by Rapptz.
 #                 https://github.com/Rapptz/RoboDanny/
 
-description = "PieBot - An entertainment bot by PandaHappy & Pancake3"
+description = "PieBot - A discord trading card game bot!"
 VERSION = "Unreleased"
 
 class Bot(commands.Bot):
