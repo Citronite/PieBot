@@ -3,17 +3,18 @@ from playhouse.sqliteq import SqliteQueueDatabase
 
 DB_PATH = "./global.db"
 
-def get_global_db():
-    db = SqliteQueueDatabase(DB_PATH,
+def get_global_db(path):
+    return SqliteQueueDatabase(path,
                             use_gevent=False,
                             autostart=True,
                             queue_max_size=64,
                             results_timeout=5.0)
-    return db
+
+
 
 class Base(Model):
     class Meta:
-        database = get_global_db()
+        database = get_global_db(DB_PATH)
 
 class Clan(Base):
     """Represents a user-created "clan". Clans are basically
