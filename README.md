@@ -1,6 +1,7 @@
 # 🍰🍰 PieBot
 
-An ~~in-development~~ unfinished rpg/tcg bot for Discord.<br>
+### An ~~in-development~~ unfinished rpg/tcg bot for Discord.<br>
+
 😔 Yet another unfinished project.<br>
 Might get back to this one *sometime in the future...* 👀
 
